@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>📸 แสดงรูปจากทุกโฟลเดอร์ + อัปโหลด</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<div class="max-w-7xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6 text-gray-800">📁 โปรเจกต์ทั้งหมด</h1>
+  <div class="overflow-x-auto">
+    <table class="table-auto w-full bg-white shadow rounded overflow-hidden">
+      <thead class="bg-gray-100 text-sm text-gray-600 text-left">
+        <tr>
+          <th class="px-4 py-2">โปรเจกต์</th>
+          <th class="px-4 py-2">ชื่อโปรไฟล์</th>
+          <th class="px-4 py-2">📂 caption</th>
+          <th class="px-4 py-2">📂 cover</th>
+          <th class="px-4 py-2">📂 profile</th>
+          <th class="px-4 py-2">📂 story</th>
+          <th class="px-4 py-2 text-center" colspan="2">การจัดการ</th>
+        </tr>
+      </thead>
+      <tbody id="projectTableBody" class="text-sm"></tbody>
+    </table>
+    <div id="logArea" class="mt-4 text-sm text-green-700 font-medium whitespace-pre-line border-t pt-4"></div>
+  </div>
+</div>
+
+<div id="infoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+  <div class="bg-white p-6 w-full max-w-4xl rounded shadow-lg overflow-y-auto max-h-[90vh] relative">
+    <button onclick="closeModal()" class="absolute top-2 right-4 text-2xl text-gray-400 hover:text-red-500">&times;</button>
+    <h2 id="modalTitle" class="text-xl font-bold text-gray-800 mb-4"></h2>
+    <div id="modalContent" class="space-y-4"></div>
+  </div>
+</div>
+
+<script>
+const folders = ['caption_photo', 'cover_photo', 'profile_photo', 'story_photo'];
+const uploadedFiles = {};  // key: project_folder => file
+
+async function loadProjects() {
+  const res = await fetch('/api/projects');
+  const projects = await res.json();
+  const tbody = document.getElementById('projectTableBody');
+  tbody.innerHTML = '';
+
+  for (const project of projects) {
+    const tr = document.createElement('tr');
+    tr.className = "border-t";
+
+    let profileText = '–';
+    try {
+      const res = await fetch(`/api/data/${project}/app_profiles`);
+      const data = await res.json();
+      const cols = {};
+      data.columns.forEach((col, i) => cols[col] = i);
+      const row = data.rows[0];
+      if (row) {
+        profileText = `ชิ่อ : ${row[cols["first_Name"]]} ${row[cols["last_Name"]]} <br>Prompt Text=>${row[cols["prompt_text"]]} <br>ไบโอ : (${row[cols["bio_intro"]]})`;
+      }
+    } catch { profileText = '⚠️ โปรไฟล์ error'; }
+
+    const folderImgs = await Promise.all(folders.map(async folder => {
+      const inputId = `file-${project}-${folder}`;
+      const key = `${project}_${folder}`;
+      try {
+        const r = await fetch(`/api/list-images/${project}/${folder}`);
+        const d = await r.json();
+        const img = d.files[0];
+        return `
+          <div class="relative group">
+            <input type="file" id="${inputId}" class="hidden" accept="image/*"
+              onchange="handleImageUpload(event, '${project}', '${folder}')">
+            <img src="/images/${project}/${folder}/${img}"
+                 onclick="document.getElementById('${inputId}').click()"
+                 class="cursor-pointer h-[160px] w-[160px] object-cover rounded shadow border hover:opacity-80 transition">
+          </div>`;
+      } catch {
+        return `
+          <div class="relative group">
+            <input type="file" id="${inputId}" class="hidden" accept="image/*"
+              onchange="handleImageUpload(event, '${project}', '${folder}')">
+            <div onclick="document.getElementById('${inputId}').click()"
+                 class="h-[160px] w-[160px] bg-red-100 text-red-600 text-sm flex items-center justify-center rounded cursor-pointer hover:opacity-80 transition">
+              Waitting
+            </div>
+          </div>`;
+      }
+    }));
+
+    tr.innerHTML = `
+      <td class="px-4 py-2 font-mono text-gray-700">${project}</td>
+      <td class="px-4 py-2 text-gray-800">${profileText}</td>
+      ${folderImgs.map(img => `<td class="px-2 py-2">${img}</td>`).join('')}
+      <td class="px-2 py-2">
+        <button onclick="openModal('${project}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded">info</button>
+      </td>
+      <td class="px-2 py-2">
+        <button onclick="saveProject('${project}')" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded">save</button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  }
+}
+
+function openModal(project) {
+  document.getElementById('modalTitle').textContent = `📁 ข้อมูลโปรเจกต์: ${project}`;
+  document.getElementById('modalContent').innerHTML = `<p class="text-gray-500">🔄 กำลังโหลด...</p>`;
+  document.getElementById('infoModal').classList.remove('hidden');
+
+  fetch(`/api/data/${project}/app_profiles`)
+    .then(res => res.json())
+    .then(data => {
+      const cols = {};
+      data.columns.forEach((col, i) => cols[col] = i);
+      const html = data.rows.map(row => {
+        const name = `${row[cols["first_Name"]]} ${row[cols["last_Name"]]}`;
+        const bio = row[cols["bio_intro"]];
+        const city = row[cols["city_id"]];
+        return `<li>👤 ${name} (${bio}) - ${city}</li>`;
+      }).join('');
+      document.getElementById('modalContent').innerHTML = `<ul class="list-disc list-inside">${html}</ul>`;
+    })
+    .catch(() => {
+      document.getElementById('modalContent').innerHTML = `<p class="text-red-500">❌ โหลดข้อมูลล้มเหลว</p>`;
+    });
+}
+
+function closeModal() {
+  document.getElementById('infoModal').classList.add('hidden');
+}
+
+function saveProject(project) {
+  let count = 0;
+  const log = document.getElementById("logArea");
+  let tempLog = `📝 ${project}\n`;
+  for (const folder of folders) {
+    const key = `${project}_${folder}`;
+    if (uploadedFiles[key]) {
+      const formData = new FormData();
+      formData.append('file', uploadedFiles[key]);
+      fetch(`/upload/${project}/${folder}`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(json => {
+        const line = json.status
+          ? `✅ ${folder} บันทึกแล้ว` 
+          : `❌ ${folder} ล้มเหลว: ${json.error}`;
+        log.innerHTML += `\n${project}: ${line}`;
+        alert(`✅ ${folder} บันทึกแล้ว`);
+      });
+      count++;
+    }
+  }
+  if (count === 0) {
+    log.innerHTML += `\n⚠️ ไม่มีรูปใหม่สำหรับ ${project}`;
+  }
+}
+
+function handleImageUpload(event, project, folder) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const key = `${project}_${folder}`;
+  uploadedFiles[key] = file;
+
+  const imgBox = event.target.closest('.group');
+  const previewUrl = URL.createObjectURL(file);
+  imgBox.innerHTML = `
+    <input type="file" class="hidden" accept="image/*"
+      onchange="handleImageUpload(event, '${project}', '${folder}')">
+    <img src="${previewUrl}" class="h-[160px] w-[160px] object-cover rounded shadow border cursor-pointer"
+         onclick="this.previousElementSibling.click()">
+    <p class="text-xs text-gray-500 mt-1">📷 preview แล้ว</p>
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', loadProjects);
+</script>
+
+</body>
+</html>

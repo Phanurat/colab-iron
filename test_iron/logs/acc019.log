@@ -1,0 +1,82 @@
+✅ fullProxy: gamezaba:JQk2ywNFd7@51.79.228.210:11602
+✅ TLS Handshake สำเร็จ
+▶️ [1] SendPing
+🌐 ใช้ Proxy: 51.79.228.210:11602
+▶️ [1]ส่งรีเควสสสสสสสสสสส SendPing
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+📂 DB PATH: acc019\fb_comment_system.db
+▶️ [1]ส่งรีเควสสสสสสสสสสส SendPing
+✅ Status: 200 OK
+📦 Response: 
+▶️ [1] เปิดแอพ
+🚀 เปิดแอพ
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AFKH2Dq3amHoVm_gcdb019m"}}
+💾 บันทึก response แล้ว (แทนที่แถวเดิม) พร้อม timestamp: 2025-08-12T22:30:22+07:00
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AkkXpUMqzNlyc2ELiIQtr_m"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AN31wRk9_hvbaY47ybXoNmk"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"A0SXChjCAuFeSb1Ff1nbwvT"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AA_U7sJq_8suSC_czd2wNa2"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AKwBfDi-HI0A8eOXq2Es2jr"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AkN-54LpaQoruHEpcCKtnf9"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AmUDLO6gr7Fya8w4KK2qjwd"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"APkgQzLNdHT5cYKtUErZWiI"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AYaseQcy0whl61K2GiaflD_"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AJArFV8MrP2J1gtb_iORi3f"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AB5AvwCyHdNELYRfnmspSIa"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"Aog-LMbKgaa759-ekjNUFg7"}}
+🌐 ใช้ Proxy: 51.79.228.210:11602
+📂 DB PATH: acc019\fb_comment_system.db
+📂 DB PATH: acc019/fb_comment_system.db
+✅ Status: 401 Unauthorized
+📦 Response: {"error":{"message":"Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.","type":"OAuthException","code":190,"error_subcode":452,"fbtrace_id":"AjUv8r78rKCsQuaEv_xhkoy"}}

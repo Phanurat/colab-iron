@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Dashboard Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .excel-like-cell {
+            min-width: 150px;
+            max-width: 300px;
+            max-height: 60px;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">News Dashboard Control Panel</h1>
+
+        <div class="flex flex-wrap gap-3 mb-6">
+            <a href="/dashboard"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Home</a>
+            <a href="/app-profiles"
+                class="bg-gray-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">App
+                Profiles</a>
+            <a href="/group"
+                class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Group</a>
+            <a href="/pic-caption"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Pic
+                Caption</a>
+            <a href="/caption-text"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Caption
+                Text</a>
+            <a href="/set-status-text"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Set
+                Status Text</a>
+            <a href="/shared-link"
+                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Shared
+                Link</a>
+            <a href="/shared-link-text"
+                class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Shared
+                Link Text</a>
+            <a href="/subscribe-id"
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Subscribe
+                ID</a>
+            <a href="/unsubscribe-id"
+                class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">Unsubscribe
+                ID</a>
+            <a href="/change-bio"
+                class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">change-bio</a>
+            <!-- <a href="/upload-form"
+                class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium shadow transition duration-300">upload-form</a> -->
+        </div>
+        <!-- Form -->
+        <form id="newsForm" class="bg-white rounded-lg shadow-md p-6 space-y-4">
+            <div>
+                <label class="block mb-1 text-gray-700">Topic News</label>
+                <input type="text" id="topic" class="w-full border px-4 py-2 rounded-md" required>
+            </div>
+            <div>
+                <label class="block mb-1 text-gray-700">Link News</label>
+                <input type="text" id="link" class="w-full border px-4 py-2 rounded-md" required>
+            </div>
+            <div>
+                <label class="block mb-1 text-gray-700">Reaction</label>
+                <select id="reaction" class="w-full border px-4 py-2 rounded-md">
+                    <option value="like">Like</option>
+                    <option value="love">Love</option>
+                    <option value="haha">Haha</option>
+                    <option value="wow">Wow</option>
+                    <option value="sad">Sad</option>
+                    <option value="angry">Angry</option>
+                </select>
+            </div>
+            <div>
+                <label class="block mb-1 text-gray-700">Like Value</label>
+                <input type="number" id="likeValue" class="w-full border px-4 py-2 rounded-md" value="0" required>
+            </div>
+            <div>
+                <label class="block mb-1 text-gray-700">Comment Value</label>
+                <input type="number" id="commentValue" class="w-full border px-4 py-2 rounded-md" value="0" required>
+            </div>
+            <div>
+                <label class="block mb-1 text-gray-700">Status</label>
+                <select id="status" class="w-full border px-4 py-2 rounded-md">
+                    <option value="auto">Auto Detect</option>
+                    <option value="like_and_comment">Like And Comment</option>
+                    <option value="like_and_reply_comment">Like and Reply Comment</option>
+                    <option value="like_comment_only">Like Comment Only</option>
+                    <option value="like_only">Like Only</option>
+                    <option value="like_reel_comment_reel">Like Reel Comment And Comment Reel</option>
+                    <option value="like_reel_only">Like Reel Only</option>
+                    <option value="like_page">Like Page</option>
+                    <option value="shared_link">Shared Link</option>
+                    <option value="shared_link_text">Shared Link Text</option>
+                    <option value="subscribe_id">Subscribe Id</option>
+                    <option value="unsubscribe">Unsubscribe</option>
+                    <option value="join_group">Join Group</option>
+                    <option value="leave_group">Leave Group</option>
+                </select>
+            </div>
+            <div>
+                <label class="block mb-1 text-gray-700">Log</label>
+                <select id="log" class="w-full border px-4 py-2 rounded-md">
+                    <option value="unused">Unused</option>
+                </select>
+            </div>
+            <div>
+                <label class="block mb-1 text-gray-700">Status Code</label>
+                <select id="status_code" class="w-full border px-4 py-2 rounded-md">
+                    <option value="wait_code">Wait Status ...</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Add
+                News</button>
+        </form>
+
+        <!-- Table -->
+        <div class="mt-10 bg-white rounded-lg shadow-md overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="sticky-header border-b">
+                        <th class="excel-like-cell">#</th>
+                        <th class="excel-like-cell">Topic</th>
+                        <th class="excel-like-cell">Link</th>
+                        <th class="excel-like-cell">Reaction</th>
+                        <th class="excel-like-cell">Likes</th>
+                        <th class="excel-like-cell">Comments</th>
+                        <th class="excel-like-cell">Timestamp</th>
+                        <th class="excel-like-cell">Status</th>
+                        <th class="excel-like-cell">Log</th>
+                        <th class="excel-like-cell">Status Code</th>
+                    </tr>
+                </thead>
+                <tbody id="newsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('newsForm');
+        const tableBody = document.getElementById('newsTableBody');
+        let count = 1;
+
+        // 🔍 ตรวจประเภทลิงก์ Facebook
+        function getFacebookLinkType(link) {
+            try {
+                const url = new URL(link);
+                const path = url.pathname;
+                const query = url.searchParams;
+
+                if (query.has("comment_id")) return "comment";
+                if (path.includes("/reel") || path.includes("/reels")) return "reel";
+                if (path.includes("/groups/") && path.includes("/permalink/")) return "group_post";
+                if (path.includes("/posts/")) return "page_post";
+                if (path.includes("/photo.php")) return "photo";
+                if (path.includes("/watch/")) return "video_watch";
+                if (path.includes("/videos/")) return "video";
+                if (path.startsWith("/profile.php")) return "profile_id";
+                if (/^\/[a-zA-Z0-9_.]+\/?$/.test(path)) return "profile_username";
+                return "unknown";
+            } catch (err) {
+                return "invalid";
+            }
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const topic = document.getElementById('topic').value;
+            const link = document.getElementById('link').value;
+            const reaction = document.getElementById('reaction').value;
+            const likeValue = parseInt(document.getElementById('likeValue').value);
+            const commentValue = parseInt(document.getElementById('commentValue').value);
+            const timestamp = new Date().toLocaleString('th-TH');
+            let status = document.getElementById('status').value;
+            const log = document.getElementById('log').value;
+            const status_code = document.getElementById('status_code').value;
+
+            // ✅ ตรวจประเภทลิงก์ก่อน set status
+            if (status === "auto") {
+                const linkType = getFacebookLinkType(link);
+                console.log("🔍 ตรวจพบลิงก์ประเภท:", linkType);
+
+                const isReel = linkType === "reel";
+                const isComment = linkType === "comment";
+
+                if (isReel) {
+                    status = commentValue > 0 ? "like_reel_comment_reel" : "like_reel_only";
+                } else if (isComment) {
+                    status = commentValue > 0 ? "like_and_reply_comment" : "like_comment_only";
+                } else {
+                    // ✅ โพสต์ธรรมดา
+                    if (likeValue > 0 && commentValue === 0) {
+                        status = "like_only";
+                    } else if (likeValue > 0 && commentValue > 0) {
+                        status = "like_and_comment";
+                    } else {
+                        status = "view_only";
+                    }
+                }
+            }
+
+            // ✅ POST ไปยัง backend
+            fetch('/api/insert/news', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    topic,
+                    link,
+                    reaction,
+                    likeValue,
+                    commentValue,
+                    timestamp,
+                    status,
+                    log,
+                    status_code
+                })
+            })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="excel-like-cell">${count++}</td>
+                            <td class="excel-like-cell">${topic}</td>
+                            <td class="excel-like-cell"><a href="${link}" class="text-blue-600 underline" target="_blank">${link}</a></td>
+                            <td class="excel-like-cell">${reaction}</td>
+                            <td class="excel-like-cell">${likeValue.toLocaleString()}</td>
+                            <td class="excel-like-cell">${commentValue.toLocaleString()}</td>
+                            <td class="excel-like-cell">${timestamp}</td>
+                            <td class="excel-like-cell">${status}</td>
+                            <td class="excel-like-cell">${log}</td>
+                            <td class="excel-like-cell">${status_code}</td>
+                        `;
+                        tableBody.appendChild(row);
+                        form.reset();
+                    } else {
+                        alert('❌ Error: ' + result.error);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("❌ Failed to connect to server");
+                });
+        });
+
+        // ✅ โหลดข้อมูลเก่า
+        function fetchAndRenderNews() {
+            fetch('/api/get/news')
+                .then(res => res.json())
+                .then(data => {
+                    tableBody.innerHTML = "";
+                    data.forEach((news, index) => {
+                        const likeValue = Number(news.like_value);
+                        const commentValue = Number(news.comment_value);
+                        const likeText = likeValue.toLocaleString();
+                        const commentText = commentValue.toLocaleString();
+
+                        let derivedStatus = news.status;
+                        if (news.status === "auto") {
+                            if (likeValue > 0 && commentValue === 0) derivedStatus = "like_only";
+                            else if (likeValue > 0 && commentValue > 0) derivedStatus = "like_and_comment";
+                            else if (likeValue === 0 && commentValue > 0) derivedStatus = "like_comment_only";
+                            else derivedStatus = "view_only";
+                        }
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="excel-like-cell">${index + 1}</td>
+                            <td class="excel-like-cell">${news.topic}</td>
+                            <td class="excel-like-cell"><a href="${news.link}" class="text-blue-600 underline" target="_blank">${news.link}</a></td>
+                            <td class="excel-like-cell">${news.reaction}</td>
+                            <td class="excel-like-cell">${likeText}</td>
+                            <td class="excel-like-cell">${commentText}</td>
+                            <td class="excel-like-cell">${news.timestamp}</td>
+                            <td class="excel-like-cell">${derivedStatus}</td>
+                            <td class="excel-like-cell">${news.log}</td>
+                            <td class="excel-like-cell">${news.status_code}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(err => {
+                    console.error("❌ Error fetching news:", err);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAndRenderNews);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>🔓 Switch Unlock Editor</title>
+  <script src="https://cdn.jsdelivr.net/npm/handsontable@14.0.0/dist/handsontable.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@14.0.0/dist/handsontable.full.min.css">
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%; width: 100%;
+      font-family: sans-serif; background-color: #f9f9f9; overflow: hidden;
+    }
+    #toolbar {
+      height: 48px;
+      background-color: #eaeaea;
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 12px; border-bottom: 1px solid #ccc;
+    }
+    #hot {
+      position: absolute;
+      top: 48px; left: 0; right: 0; bottom: 0;
+    }
+    button, .btn-link {
+      font-size: 14px; padding: 6px 12px;
+      text-decoration: none; border: 1px solid #ccc;
+      background-color: white; border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-link:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div id="toolbar">
+  <a href="/" class="btn-link">🏠 Home</a>
+  <button onclick="loadData()">🔄 Load Switch Unlock</button>
+  <button onclick="saveData()">💾 Save</button>
+  <button><a href="/bio-intro">bio-intro</a></button>
+  <button><a href="/change-city">change-city</a></button>
+  <button><a href="/change-name">change-name</a></button>
+  <button><a href="/switch-bio">switch-bio></a></button>
+  <button><a href="/switch-lock">switch-lock></a></button>
+  <button><a href="/switch-unlock">switch-unlock></a></button>
+  <button><a href="/log">log-info</a></button>
+</div>
+
+<div id="hot"></div>
+
+<script>
+  const hotDiv = document.getElementById("hot");
+  let hot;
+  const column = "status_id";
+  const table = "switch_for_unlock_profile_table";
+  let currentHeaders = ["project", column];
+
+  async function loadData() {
+    const projects = await fetch('/api/projects').then(r => r.json());
+    const allData = [];
+
+    for (const p of projects) {
+      try {
+        const res = await fetch(`/api/get/${p}/${table}`);
+        const data = await res.json();
+        const value = data[column] ?? "";
+        allData.push([p, value]);
+      } catch {
+        allData.push([p, ""]);
+      }
+    }
+
+    if (hot) hot.destroy();
+    hot = new Handsontable(hotDiv, {
+      data: allData,
+      colHeaders: currentHeaders,
+      rowHeaders: true,
+      contextMenu: true,
+      stretchH: 'last',
+      width: '100%',
+      height: '100%',
+      colWidths: [120, 300],
+      licenseKey: 'non-commercial-and-evaluation'
+    });
+  }
+
+  function saveData() {
+    const allData = hot.getData();
+    for (const row of allData) {
+      const project = row[0];
+      const value = row[1];
+      if (project && value !== null && value !== "") {
+        fetch(`/api/update/${project}/${table}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ value })
+        }).then(r => r.json()).then(console.log);
+      }
+    }
+    alert("✅ บันทึกค่า status_id (unlock) สำเร็จทุกโปรเจกต์");
+  }
+
+  window.addEventListener("resize", () => {
+    if (hot) hot.render();
+  });
+</script>
+
+</body>
+</html>

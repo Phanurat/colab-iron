@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 Respond Logs Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-indigo-800 text-white flex flex-col">
+    <div class="text-2xl font-bold p-6 border-b border-indigo-700">🔧 Admin Panel</div>
+    <nav class="flex-1 p-4 space-y-2">
+      <a href="/" class="block px-4 py-2 rounded hover:bg-indigo-700">🏠 Home</a>
+      <a href="#" class="block px-4 py-2 rounded bg-indigo-700">📋 Respond Logs</a>
+    </nav>
+    <div class="p-4 text-xs text-gray-300 border-t border-indigo-700">
+      © 2025 Syndtech
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto p-6">
+    <h1 class="text-3xl font-bold text-indigo-800 mb-6">📋 Logs แสดงแบบต่อแถว (1 โปรเจกต์ / แถว)</h1>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-xs bg-white border border-gray-300 rounded shadow">
+        <thead class="bg-gray-100 text-gray-700">
+          <tr>
+            <th class="px-3 py-2 border text-left">📁 Project</th>
+            <th class="px-3 py-2 border text-left">respond_comment</th>
+            <th class="px-3 py-2 border text-left">respond_comment_comment</th>
+            <th class="px-3 py-2 border text-left">respond_comment_reel</th>
+            <th class="px-3 py-2 border text-left">Status</th>
+            <th class="px-3 py-2 border text-left">respond_like_before_comment</th>
+            <th class="px-3 py-2 border text-left">respond_like_comment_only</th>
+            <th class="px-3 py-2 border text-left">respond_like_only</th>
+            <th class="px-3 py-2 border text-left">respond_reel_only</th>
+          </tr>
+        </thead>
+        <tbody id="logTable" class="text-gray-700"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+  async function loadLogs() {
+    const res = await fetch('/api/get/all-respond-log');
+    const data = await res.json();
+    const tbody = document.getElementById('logTable');
+
+    const types = [
+      "respond_comment",
+      "respond_comment_comment",
+      "respond_comment_reel",
+      "respond_jewel",
+      "respond_like_before_comment",
+      "respond_like_comment_only",
+      "respond_like_only",
+      "respond_reel_only"
+    ];
+
+    Object.entries(data).forEach(([project, logs]) => {
+      const row = document.createElement('tr');
+      row.className = "hover:bg-gray-50 align-top";
+
+      const projectCell = `<td class="px-3 py-2 border font-semibold text-indigo-700 whitespace-nowrap">${project}</td>`;
+
+      const logCells = types.map(type => {
+        const rows = logs[type];
+        if (!Array.isArray(rows) || rows.length === 0) {
+          return `<td class="px-3 py-2 border text-gray-400 italic">—</td>`;
+        }
+
+        let isDead = false;
+
+        const messages = rows.slice(0, 3).map((r, i) => {
+          try {
+            if (typeof r.respond_txt !== 'string') {
+              throw new Error('respond_txt is not a string');
+            }
+
+            const txt = r.respond_txt;
+            const preview = txt.length > 80 ? txt.substring(0, 80) + '...' : txt;
+
+            // ตรวจว่าข้อความมีคำว่า "error" หรือ "Error"
+            if (txt.toLowerCase().includes("error")) {
+              isDead = true;
+              return `<div class="mb-1 text-red-600">❌ ${preview}</div>`;
+            } else {
+              return `<div class="mb-1">📝 ${preview}</div>`;
+            }
+
+          } catch (e) {
+            isDead = true;
+            return `<div class="mb-1 text-red-600">❌ ข้อความ #${i + 1} มีปัญหา: ${e.message}</div>`;
+          }
+        }).join('');
+
+        const statusBadge = isDead
+          ? `<div class="mt-2 inline-block text-xs bg-red-100 text-red-700 px-2 py-1 rounded">💀 Die</div>`
+          : `<div class="mt-2 inline-block text-xs bg-green-100 text-green-700 px-2 py-1 rounded">✅ Live</div>`;
+
+        return `<td class="px-3 py-2 border max-w-xs break-words">${messages}${statusBadge}</td>`;
+      });
+
+      row.innerHTML = projectCell + logCells.join('');
+      tbody.appendChild(row);
+    });
+  }
+
+  window.onload = loadLogs;
+</script>
+
+
+</body>
+</html>

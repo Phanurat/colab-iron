@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>📊 SQLite App Profiles Editor</title>
+  <script src="https://cdn.jsdelivr.net/npm/handsontable@14.0.0/dist/handsontable.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@14.0.0/dist/handsontable.full.min.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: sans-serif;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+    #toolbar {
+      height: 48px;
+      background-color: #eaeaea;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      border-bottom: 1px solid #ccc;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+    }
+    #hot {
+      position: absolute;
+      top: 96px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    button {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .custom-header {
+      background-color: #4b5563 !important;
+      color: white !important;
+      font-weight: bold;
+      text-align: center;
+    }
+    .htWrap {
+      white-space: normal !important;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    /* ปุ่มเปิด */
+    .btn-open {
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    /* พื้นหลัง popup */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    /* เนื้อหา popup */
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%; /* ขนาดของ popup */
+      max-height: 80%; /* จำกัดความสูง */
+      overflow-y: auto; /* เลื่อนข้อมูล */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .close {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    /* ปุ่มคัดลอก */
+    .btn-copy {
+      padding: 5px 10px;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .copy-btn-container {
+      display: flex;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* ส่วนแจ้งเตือน */
+    .alert {
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      display: none;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+
+<div id="toolbar">
+  <button><a href="http://127.0.0.1:5000/dashboard">Dashboard</a></button>
+  <button><a href="/">Home</a></button>
+  <button onclick="loadAllAppProfiles()">🔄 Load All Projects</button>
+  <button onclick="saveAllAppProfiles()">💾 Save</button>
+  <button><a href="/bio-intro">bio-intro</a></button>
+  <button><a href="/change-city">change-city</a></button>
+  <button><a href="/change-name">change-name</a></button>
+  <button><a href="/switch-bio">switch-bio</a></button>
+  <button><a href="/switch-lock">switch-lock</a></button>
+  <button><a href="/switch-unlock">switch-unlock</a></button>
+  <button><a href="/log">log-info</a></button>
+  <button><a href="/upload-form">upload-form</a></button>
+  <button><a href="/proxy-info">proxy-info</a></button>
+  <button><a href="/check-acc">check-acc</a></button>
+</div>
+
+<div id="toolbar">
+  <button class="btn-open" onclick="openModal()">แยก Token</button>
+  <div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>ป้อนข้อมูล ID|TOKEN</h3>
+    <textarea id="dataInput" placeholder="ป้อนข้อมูล ID|TOKEN ต่อบรรทัด..."></textarea>
+    <button onclick="processData()">แยกข้อมูล</button>
+  </div>
+</div>
+
+<div id="resultModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeResultModal()">&times;</span>
+    <h3>ผลลัพธ์:</h3>
+    <button class="btn-copy" onclick="copyTableData()">คัดลอกทั้งหมด</button>
+    <button class="btn-copy" onclick="copyColumnData('facebook')">คัดลอก Facebook ID</button>
+    <button class="btn-copy" onclick="copyColumnData('token')">คัดลอก Access Token</button>
+    <table id="resultTable">
+      <thead>
+        <tr>
+          <th>Facebook ID</th>
+          <th>Access Token</th>
+          <th>คัดลอก</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    
+  </div>
+</div>
+<!-- แจ้งเตือน -->
+<div id="alert" class="alert"></div>
+
+<script>
+function openModal() {
+  document.getElementById("myModal").style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("myModal").style.display = "none";
+}
+
+function openResultModal() {
+  document.getElementById("resultModal").style.display = "block";
+}
+
+function closeResultModal() {
+  document.getElementById("resultModal").style.display = "none";
+}
+
+function processData() {
+  const input = document.getElementById("dataInput").value.trim();
+  const lines = input.split("\n");
+  const tbody = document.querySelector("#resultTable tbody");
+  tbody.innerHTML = ""; // ล้างข้อมูลเก่า
+
+  lines.forEach(line => {
+    const [id, token] = line.split("|");
+    if (id && token) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${id.trim()}</td>
+        <td>${token.trim()}</td>
+        <td><button class="btn-copy" onclick="copyRowData('${id.trim()}', '${token.trim()}')">คัดลอก</button></td>
+      `;
+      tbody.appendChild(row);
+    }
+  });
+
+  closeModal(); // ปิด popup หลังแยกเสร็จ
+  openResultModal(); // เปิด popup ผลลัพธ์
+}
+
+function copyRowData(id, token) {
+  const text = `Facebook ID: ${id}\nAccess Token: ${token}`;
+
+  // ใช้ Clipboard API
+  navigator.clipboard.writeText(text).then(() => {
+    showAlert('คัดลอกข้อมูลแถวนี้เรียบร้อย!', 'success');
+  }).catch((err) => {
+    showAlert('ไม่สามารถคัดลอกข้อมูลได้!', 'error');
+  });
+}
+
+function copyTableData() {
+  const table = document.getElementById("resultTable");
+  const rows = table.rows;
+  let text = "";
+  for (let i = 1; i < rows.length; i++) {
+    text += rows[i].cells[0].textContent + "\t" + rows[i].cells[1].textContent + "\n";
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    showAlert('คัดลอกข้อมูลทั้งหมดเรียบร้อย!', 'success');
+  }).catch((err) => {
+    showAlert('ไม่สามารถคัดลอกข้อมูลได้!', 'error');
+  });
+}
+
+function copyColumnData(column) {
+  const table = document.getElementById("resultTable");
+  const rows = table.rows;
+  let text = "";
+  if (column === 'facebook') {
+    for (let i = 1; i < rows.length; i++) {
+      text += rows[i].cells[0].textContent + "\n";
+    }
+  } else if (column === 'token') {
+    for (let i = 1; i < rows.length; i++) {
+      text += rows[i].cells[1].textContent + "\n";
+    }
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    showAlert(`คัดลอก ${column === 'facebook' ? 'Facebook ID' : 'Access Token'} เรียบร้อย!`, 'success');
+  }).catch((err) => {
+    showAlert('ไม่สามารถคัดลอกข้อมูลได้!', 'error');
+  });
+}
+
+function showAlert(message, type) {
+  const alert = document.getElementById('alert');
+  alert.textContent = message;
+  alert.className = `alert alert-${type}`;
+  alert.style.display = 'block';
+
+  // ปิดแจ้งเตือนหลัง 3 วินาที
+  setTimeout(() => {
+    alert.style.display = 'none';
+  }, 3000);
+}
+</script>
+
+<div id="hot"></div>
+
+<script>
+  const hotDiv = document.getElementById("hot");
+  let hot;
+  let currentHeaders = [];
+
+  function loadAllAppProfiles() {
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(projects => {
+        const promises = projects.map(p =>
+          fetch(`/api/data/${p}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.app_profiles) {
+                return data.app_profiles.rows.map(row => [p, ...row]);
+              } else {
+                return [];
+              }
+            })
+        );
+
+        Promise.all(promises).then(results => {
+          const flatRows = results.flat();
+
+          fetch(`/api/data/${projects[0]}`)
+            .then(res => res.json())
+            .then(data => {
+              const headers = ["project", ...data.app_profiles.columns];
+              currentHeaders = headers;
+
+              if (hot) hot.destroy();
+
+              const colWidths = headers.map(h => {
+                if (h.toLowerCase().includes("token") || h.toLowerCase().includes("agent")) return 200;
+                if (h.toLowerCase().includes("name")) return 120;
+                if (h === "project") return 80;
+                return 100;
+              });
+
+              hot = new Handsontable(hotDiv, {
+                data: flatRows,
+                colHeaders: headers,
+                rowHeaders: true,
+                contextMenu: true,
+                manualRowMove: true,
+                manualColumnResize: true,
+                stretchH: 'all',
+                width: '100%',
+                height: '100%',
+                colWidths: colWidths,
+                licenseKey: 'non-commercial-and-evaluation',
+                wordWrap: true,
+                autoWrapRow: true,
+                autoWrapCol: true,
+                cells: function(row, col) {
+                  const cellProperties = {};
+                  const colHeader = currentHeaders[col];
+                  cellProperties.className = 'htWrap';
+
+                  const colorMap = {
+                    actor_id: "#ffe0e0",
+                    access_token: "#fff3cd",
+                    user_agent: "#e0f0ff",
+                    first_Name: "#e8f5e9",
+                    last_Name: "#f3e5f5",
+                    school_name: "#fffde7",
+                    bio_intro: "#fbe9e7",
+                    city_id: "#e0f7fa",
+                    prompt_text: "#ede7f6"
+                  };
+
+                  if (colorMap[colHeader]) {
+                    cellProperties.renderer = function(instance, td, row, col, prop, value, cellProperties) {
+                      Handsontable.renderers.TextRenderer.apply(this, arguments);
+                      td.style.backgroundColor = colorMap[colHeader];
+                      td.style.fontWeight = "bold";
+                    };
+                  }
+
+                  return cellProperties;
+                },
+
+                afterGetColHeader: function(col, TH) {
+                  if (TH && !TH.classList.contains('custom-header')) {
+                    TH.classList.add('custom-header');
+                  }
+                }
+              });
+            });
+        });
+      });
+  }
+
+  function saveAllAppProfiles() {
+    if (!hot) return;
+
+    const allData = hot.getData();
+    const headers = hot.getColHeader();
+    const columns = headers.slice(1);
+
+    const grouped = {};
+    for (const row of allData) {
+      const project = row[0];
+      const values = row.slice(1);
+      if (!grouped[project]) grouped[project] = [];
+      grouped[project].push(values);
+    }
+
+    for (const [project, rows] of Object.entries(grouped)) {
+      const payload = JSON.stringify({ columns, rows });
+      fetch(`/api/update/${project}/app_profiles`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload
+      })
+        .then(res => res.json())
+        .then(msg => console.log(`[✓] ${project}`, msg));
+    }
+
+    alert("✅ ข้อมูลถูกส่งไปอัปเดตแบบ background");
+  }
+
+  window.addEventListener("resize", () => {
+    if (hot) hot.render();
+  });
+</script>
+
+</body>
+</html>

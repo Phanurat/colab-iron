@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>🧑‍💻 Change Name Editor</title>
+  <script src="https://cdn.jsdelivr.net/npm/handsontable@14.0.0/dist/handsontable.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@14.0.0/dist/handsontable.full.min.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      overflow: hidden;
+    }
+    #toolbar {
+      height: 48px;
+      background-color: #eaeaea;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      border-bottom: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    #hot {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    button, .btn-link {
+      font-size: 14px;
+      padding: 6px 12px;
+      text-decoration: none;
+      border: 1px solid #ccc;
+      background-color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-link:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div id="toolbar">
+  <a href="/" class="btn-link">🏠 Home</a>
+  <button onclick="loadChangeName()">🔄 Load Name</button>   
+  <button onclick="saveChangeName()">💾 Save</button>
+  <button><a href="/bio-intro">bio-intro</a></button>
+  <button><a href="/change-city">change-city</a></button>
+  <button><a href="/change-name">change-name</a></button>
+  <button><a href="/switch-bio">switch-bio></a></button>
+  <button><a href="/switch-lock">switch-lock></a></button>
+  <button><a href="/switch-unlock">switch-unlock></a></button>
+  <button><a href="/log">log-info</a></button>
+</div>
+
+<div id="hot"></div>
+
+<script>
+  const hotDiv = document.getElementById("hot");
+  let hot;
+  let currentHeaders = [];
+
+  async function loadChangeName() {
+    const projects = await fetch('/api/projects').then(r => r.json());
+
+    // STEP 1: หาคอลัมน์จริง
+    let columns = null;
+    for (const p of projects) {
+      const res = await fetch(`/api/data/${p}`);
+      const data = await res.json();
+      if (data.change_name_table && Array.isArray(data.change_name_table.columns) && data.change_name_table.columns.length > 0) {
+        columns = data.change_name_table.columns;
+        break;
+      }
+    }
+    if (!columns) columns = ["id", "first_Name", "last_Name"];
+    const headers = ["project", ...columns];
+    currentHeaders = headers;
+
+    // STEP 2: โหลด rows ทุกโปรเจกต์
+    const promises = projects.map(async (p) => {
+      try {
+        const res = await fetch(`/api/data/${p}`);
+        const data = await res.json();
+        if (data.change_name_table && Array.isArray(data.change_name_table.rows)) {
+          const rows = data.change_name_table.rows;
+          if (rows.length === 0) {
+            return [[p, ...columns.map(() => null)]];
+          } else {
+            return rows.map(row => [p, ...row]);
+          }
+        } else {
+          return [[p, ...columns.map(() => null)]];
+        }
+      } catch (e) {
+        console.warn(`❌ error loading ${p}`, e);
+        return [[p, ...columns.map(() => null)]];
+      }
+    });
+
+    const results = await Promise.all(promises);
+    const flatRows = results.flat();
+
+    if (hot) hot.destroy();
+    hot = new Handsontable(hotDiv, {
+      data: flatRows,
+      colHeaders: headers,
+      rowHeaders: true,
+      contextMenu: true,
+      manualRowMove: true,
+      manualColumnResize: true,
+      stretchH: 'last',
+      width: '100%',
+      height: '100%',
+      colWidths: headers.map(h => h === "project" ? 100 : 200),
+      licenseKey: 'non-commercial-and-evaluation'
+    });
+  }
+
+  function saveChangeName() {
+    const allData = hot.getData();
+    const grouped = {};
+    const columns = currentHeaders.slice(1); // remove project
+
+    for (const row of allData) {
+      const project = row[0];
+      const values = row.slice(1);
+      if (!grouped[project]) grouped[project] = [];
+      if (values.some(v => v !== null && v !== "")) {
+        grouped[project].push(values);
+      }
+    }
+
+    for (const [project, rows] of Object.entries(grouped)) {
+      const payload = JSON.stringify({ columns, rows });
+      fetch(`/api/update/${project}/change_name_table`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload
+      })
+      .then(res => res.json())
+      .then(msg => console.log(`[✓] ${project}`, msg));
+    }
+
+    alert("✅ บันทึกชื่อเรียบร้อยทุกโปรเจกต์");
+  }
+
+  window.addEventListener("resize", () => {
+    if (hot) hot.render();
+  });
+</script>
+
+</body>
+</html>

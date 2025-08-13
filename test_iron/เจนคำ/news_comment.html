@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เจนเนอเรตความคิดเห็นข่าว</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+        
+        .news-input {
+            grid-column: 1 / -1;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        
+        .comment {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8edff 100%);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .comment:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .comment-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #4f46e5;
+            border: 1px solid #c7d2fe;
+        }
+        
+        .comment-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            white-space: pre-wrap;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .helper {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗞️ เจนเนอเรตความคิดเห็นข่าว</h1>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label for="newsCategory">ประเภทข่าว:</label>
+                <select id="newsCategory">
+                    <option value="politics">การเมือง</option>
+                    <option value="economy">เศรษฐกิจ</option>
+                    <option value="society">สังคม</option>
+                    <option value="entertainment">บันเทิง</option>
+                    <option value="sports">กีฬา</option>
+                    <option value="technology">เทคโนโลยี</option>
+                    <option value="environment">สิ่งแวดล้อม</option>
+                    <option value="health">สุขภาพ</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="commentCount">จำนวนความคิดเห็น:</label>
+                <input type="number" id="commentCount" min="1" max="20" value="5">
+            </div>
+            
+            <div class="form-group news-input">
+                <label for="newsContent">เนื้อหาข่าว:</label>
+                <textarea id="newsContent" placeholder="ป้อนเนื้อหาข่าวที่ต้องการสร้างความคิดเห็น..."></textarea>
+                <div class="helper">* ไม่ใส่ก็ได้ ระบบจะสุ่มความเห็นตามหมวดข่าว</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="generateBtn">🎲 สร้างความคิดเห็น</button>
+            <button id="clearBtn">🗑️ ล้างผลลัพธ์</button>
+            <button id="exportBtn">📋 คัดลอกทั้งหมด</button>
+        </div>
+        
+        <div id="results" class="results" style="display: none;">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalComments">0</div>
+                    <div class="stat-label">ความคิดเห็นทั้งหมด</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="positiveComments">0</div>
+                    <div class="stat-label">เชิงบวก</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="negativeComments">0</div>
+                    <div class="stat-label">เชิงลบ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="neutralComments">0</div>
+                    <div class="stat-label">เป็นกลาง</div>
+                </div>
+            </div>
+            
+            <div id="commentsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // ธนาคารคำศัพท์และวลี
+        const vocabularyBank = {
+            // คำอุทานและคำเติม
+            exclamations: ['เห้ย', 'อุ๊ย', 'โอ้', 'ว้าว', 'เฮ้ย', 'อ๋อ', 'เอ๋', 'ครับ', 'ค่ะ', 'จ้า', 'หว่า'],
+            fillers: ['นะ', 'เนอะ', 'เหอะ', 'สิ', 'ล่ะ', 'เลย', 'อ่ะ', 'อะ', 'เอย'],
+            connectors: ['แล้วก็', 'แต่ว่า', 'เพราะว่า', 'ก็เลย', 'อันที่จริง', 'พูดจริงๆ', 'ตามความเป็นจริง'],
+            
+            // อีโมติคอนและสัญลักษณ์
+            emojis: ['😊', '😢', '😡', '🤔', '👍', '👎', '❤️', '🔥', '💯', '🙏', '😅', '🤷‍♀️', '🤷‍♂️'],
+            
+            // ความเข้มของความรู้สึก
+            intensity: {
+                mild: ['นิดหน่อย', 'เล็กน้อย', 'บ้าง', 'หน่อยๆ'],
+                medium: ['ค่อนข้าง', 'พอสมควร', 'ดี', 'แย่'],
+                strong: ['มาก', 'สุดๆ', 'เหลือเกิน', 'เกินไป', 'สุด', 'โคตร', 'เพี้ยน']
+            }
+        };
+
+        // กฎการสร้างประโยคตามประเภทข่าว
+        const newsRules = {
+            politics: {
+                positive: [
+                    'นโยบายนี้{intensity}ดี เห็นด้วย{emojis}',
+                    'สนับสนุนครับ ทำแบบนี้{intensity}ถูก{fillers}',
+                    '{exclamations} ชอบแนวคิดนี้ ควรทำต่อเนื่อง{emojis}',
+                    'เป็นการเปลี่ยนแปลงที่ดี{intensity} หวังให้เห็นผล{fillers}'
+                ],
+                negative: [
+                    'นโยบายนี้{intensity}ไม่เอา ไม่เห็นด้วย{emojis}',
+                    '{exclamations} ทำแบบนี้ไม่ได้หรอก{intensity}ผิด{fillers}',
+                    'ไม่สนับสนุน{intensity} คิดใหม่เถอะ{emojis}',
+                    'อันนี้มีปัญหา{intensity} ต้องแก้ไข{fillers}'
+                ],
+                neutral: [
+                    'น่าสนใจ{fillers} ดูผลต่อไปค่อยตัดสิน{emojis}',
+                    '{connectors} ต้องดูรายละเอียดเพิ่มเติม{fillers}',
+                    'มีข้อดีข้อเสียทั้งคู่ ต้องดูกัน{emojis}',
+                    'รอดูผลการดำเนินการก่อน{fillers}'
+                ]
+            },
+            economy: {
+                positive: [
+                    'เศรษฐกิจดีขึ้น{intensity} ดีใจ{emojis}',
+                    'หวังว่าจะช่วยคนได้{intensity}มาก{fillers}',
+                    '{exclamations} ข่าวดี! เงินเดือนขึ้นไหม{emojis}',
+                    'เห็นแล้วอุ่นใจ{intensity} ไปต่อได้{fillers}'
+                ],
+                negative: [
+                    'เศรษฐกิจ{intensity}ยาก คนจนลำบาก{emojis}',
+                    '{exclamations} ราคาแพง{intensity}เกินไป{fillers}',
+                    'งบประมาณไม่พอ{intensity} ต้องหาทางแก้{emojis}',
+                    'ปัญหา{intensity}ใหญ่ ต้องรีบแก้{fillers}'
+                ],
+                neutral: [
+                    'ตัวเลขน่าสนใจ{fillers} ต้องดูต่อเนื่อง{emojis}',
+                    '{connectors} อาจจะมีผลกระทบ ต้องติดตาม{fillers}',
+                    'ขึ้นอยู่กับปัจจัยหลายอย่าง{emojis}',
+                    'รอดูแนวโน้มอีกสักพัก{fillers}'
+                ]
+            },
+            society: {
+                positive: [
+                    'สังคมเปลี่ยนไปในทางที่ดี{intensity}{emojis}',
+                    'ชอบการพัฒนาแบบนี้{intensity} ดีมาก{fillers}',
+                    '{exclamations} น่าภูมิใจ{intensity} คนไทยเก่ง{emojis}',
+                    'เป็นแรงบันดาลใจ{intensity} ยิ่งใหญ่{fillers}'
+                ],
+                negative: [
+                    'ปัญหาสังคม{intensity}ใหญ่ ต้องช่วยกัน{emojis}',
+                    '{exclamations} เศร้า{intensity}มาก เกิดอะไรขึ้น{fillers}',
+                    'สังคมเสื่อมถอย{intensity} น่าเป็นห่วง{emojis}',
+                    'ต้องแก้ไขด่วน{intensity} ก่อนจะสายเกิน{fillers}'
+                ],
+                neutral: [
+                    'เป็นประเด็นที่ต้องคิด{fillers}{emojis}',
+                    '{connectors} มีหลายมุมมอง ต้องฟังทุกฝ่าย{fillers}',
+                    'สถานการณ์ซับซ้อน{emojis} ต้องศึกษาเพิ่ม{fillers}',
+                    'ความเปลี่ยนแปลงเป็นเรื่องปกติ{emojis}'
+                ]
+            },
+            entertainment: {
+                positive: [
+                    '{exclamations} สนุก{intensity}มาก ชอบ{emojis}',
+                    'เจ๋ง{intensity}เลย ตามดูต่อ{fillers}{emojis}',
+                    'ใครแนะนำมา ขอบคุณ{intensity}{emojis}',
+                    'ความบันเทิงระดับ{intensity}เทพ{fillers}'
+                ],
+                negative: [
+                    'ไม่ชอบ{intensity} แย่มาก{fillers}{emojis}',
+                    '{exclamations} เบื่อ{intensity}แล้ว ไม่ดูต่อ{emojis}',
+                    'คาดหวังมาก{intensity} ผิดหวัง{fillers}',
+                    'เสียเวลา{intensity} ไปดูอย่างอื่นดีกว่า{emojis}'
+                ],
+                neutral: [
+                    'ธรรมดา{fillers} ไม่แย่ไม่ดี{emojis}',
+                    '{connectors} พอได้ แต่ไม่ติดใจ{fillers}',
+                    'คนละรสนิยม{emojis} ขึ้นอยู่กับคนดู{fillers}',
+                    'มีข้อดีบ้างข้อเสียบ้าง{emojis}'
+                ]
+            },
+            sports: {
+                positive: [
+                    '{exclamations} เก่งสุด{intensity} ภูมิใจ{emojis}',
+                    'สู้ๆ นะ{intensity} เชียร์เสมอ{fillers}{emojis}',
+                    'ชนะสวย{intensity}มาก สมใจ{emojis}',
+                    'นักกีฬาไทยเจ๋ง{intensity} รักเลย{fillers}'
+                ],
+                negative: [
+                    'เสียดาย{intensity}มาก แพ้ไป{fillers}{emojis}',
+                    '{exclamations} น่าเสียดาย{intensity} เกือบแล้ว{emojis}',
+                    'ไม่ได้เรื่อง{intensity} ต้องฝึกเพิ่ม{fillers}',
+                    'ผลงาน{intensity}แย่ ต้องปรับปรุง{emojis}'
+                ],
+                neutral: [
+                    'พอใจกับผลงาน{fillers} ทำได้ดี{emojis}',
+                    '{connectors} แข่งดี ทั้งคู่เก่ง{fillers}',
+                    'เป็นการแข่งขันที่ดี{emojis} สนุกดู{fillers}',
+                    'ได้ประสบการณ์{intensity} ดีแล้ว{emojis}'
+                ]
+            },
+            technology: {
+                positive: [
+                    'เทคโนโลยี{intensity}เจ๋ง อยากลอง{emojis}',
+                    '{exclamations} นวัตกรรมดี{intensity} ก้าวหน้า{fillers}',
+                    'สะดวกขึ้น{intensity}เยอะ ชอบ{emojis}',
+                    'อนาคตมาถึงแล้ว{intensity} ตื่นเต้น{fillers}'
+                ],
+                negative: [
+                    'เทคโนโลยี{intensity}ซับซ้อน เข้าใจยาก{emojis}',
+                    '{exclamations} ราคาแพง{intensity}มาก ซื้อไม่ไหว{fillers}',
+                    'กลัวจะเอาใช้ไม่เป็น{intensity}{emojis}',
+                    'เปลี่ยนแปลง{intensity}เร็ว ตามไม่ทัน{fillers}'
+                ],
+                neutral: [
+                    'น่าสนใจ{fillers} รอดูรีวิวก่อน{emojis}',
+                    '{connectors} ต้องดูว่าใช้งานจริงเป็นไง{fillers}',
+                    'มีข้อดีข้อเสีย{emojis} ต้องพิจารณา{fillers}',
+                    'รอให้ราคาลงก่อน{intensity} ค่อยซื้อ{emojis}'
+                ]
+            },
+            environment: {
+                positive: [
+                    'ดีใจที่มีคนห่วงใยสิ่งแวดล้อม{intensity}{emojis}',
+                    'โลกเราจะดีขึ้น{intensity} ถ้าทุกคนช่วยกัน{fillers}',
+                    '{exclamations} น่าภูมิใจ{intensity} คิดถึงลูกหลาน{emojis}',
+                    'การอนุรักษ์{intensity}สำคัญ ต้องสนับสนุน{fillers}'
+                ],
+                negative: [
+                    'สิ่งแวดล้อม{intensity}แย่ลง น่าเป็นห่วง{emojis}',
+                    '{exclamations} ทำลายธรรมชาติ{intensity}เกินไป{fillers}',
+                    'มลพิษ{intensity}เยอะ ลูกหลานจะเป็นไง{emojis}',
+                    'ต้องหยุดทำลาย{intensity} ก่อนจะสายเกิน{fillers}'
+                ],
+                neutral: [
+                    'ปัญหาซับซ้อน{fillers} ต้องแก้ทีละขั้น{emojis}',
+                    '{connectors} ต้องสมดุลระหว่างพัฒนาและอนุรักษ์{fillers}',
+                    'เป็นเรื่องระยะยาว{emojis} ต้องค่อยๆทำ{fillers}',
+                    'ทุกคนต้องมีส่วนร่วม{intensity} จะได้ผล{emojis}'
+                ]
+            },
+            health: {
+                positive: [
+                    'สุขภาพดี{intensity}สำคัญ ดีใจด้วย{emojis}',
+                    'หวังให้คนไข้หายป่วย{intensity}เร็วๆ{fillers}',
+                    '{exclamations} ข่าวดี{intensity} หมอเก่งจริง{emojis}',
+                    'การรักษา{intensity}ก้าวหน้า มีหวัง{fillers}'
+                ],
+                negative: [
+                    'โรคร้าย{intensity}น่ากลัว เป็นห่วงคนป่วย{emojis}',
+                    '{exclamations} เศร้า{intensity}มาก หวังให้ดีขึ้น{fillers}',
+                    'ค่ารักษาพยาบาล{intensity}แพง คนจนทำไง{emojis}',
+                    'ระบบสาธารณสุข{intensity}มีปัญหา ต้องแก้{fillers}'
+                ],
+                neutral: [
+                    'เป็นเรื่องที่ต้องระวัง{fillers}{emojis}',
+                    '{connectors} ต้องดูแลสุขภาพกันมากขึ้น{fillers}',
+                    'ป้องกันดีกว่ารักษา{intensity}{emojis}',
+                    'ขึ้นอยู่กับหลายปัจจัย{fillers} ต้องศึกษาเพิ่ม{emojis}'
+                ]
+            }
+        };
+
+        // Pattern Matching สำหรับคีย์เวิร์ด
+        const keywordPatterns = {
+            positive: ['ดี', 'เก่ง', 'สำเร็จ', 'ชนะ', 'เจริญ', 'พัฒนา', 'ก้าวหน้า', 'ยอดเยี่ยม', 'สุดยอด'],
+            negative: ['แย่', 'ผิด', 'แพ้', 'ล้มเหลว', 'ปัญหา', 'วิกฤต', 'เสียหาย', 'ลดลง', 'เสื่อม'],
+            neutral: ['อาจ', 'คาด', 'ประมาณ', 'โดยประมาณ', 'อย่างไรก็ตาม', 'ในขณะเดียวกัน']
+        };
+
+        function analyzeNewsSentiment(newsContent) {
+            if (!newsContent) return 'neutral';
+            const content = newsContent.toLowerCase();
+            let positiveScore = 0;
+            let negativeScore = 0;
+            keywordPatterns.positive.forEach(word => {
+                if (content.includes(word)) positiveScore += 1;
+            });
+            keywordPatterns.negative.forEach(word => {
+                if (content.includes(word)) negativeScore += 1;
+            });
+            if (positiveScore > negativeScore) return 'positive';
+            if (negativeScore > positiveScore) return 'negative';
+            return 'neutral';
+        }
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function generateComment(category, sentiment) {
+            const rules = newsRules[category] || newsRules.society;
+            const templates = rules[sentiment] || rules.neutral;
+            let template = getRandomElement(templates);
+            
+            // แทนที่ตัวแปรในเทมเพลต
+            template = template.replace(/{intensity}/g, () => {
+                const intensityLevels = ['mild', 'medium', 'strong'];
+                const level = getRandomElement(intensityLevels);
+                return getRandomElement(vocabularyBank.intensity[level]);
+            });
+            template = template.replace(/{exclamations}/g, () => getRandomElement(vocabularyBank.exclamations));
+            template = template.replace(/{fillers}/g, () => getRandomElement(vocabularyBank.fillers));
+            template = template.replace(/{connectors}/g, () => getRandomElement(vocabularyBank.connectors));
+            template = template.replace(/{emojis}/g, () => Math.random() > 0.3 ? getRandomElement(vocabularyBank.emojis) : '');
+            
+            // เพิ่มความไม่สมบูรณ์ของภาษา
+            if (Math.random() > 0.7) {
+                const variations = ['...', '!!', '???', '5555', 'ฮ่าๆ', 'เอิ๊ก'];
+                template += getRandomElement(variations);
+            }
+            return template.trim();
+        }
+
+        function generateUserProfile() {
+            const names = ['สมชาย', 'มาลี', 'ดำรง', 'สุพัตร', 'นิรันดร์', 'วิภา', 'ประยุทธ', 'สมใจ', 'อรุณ', 'ส้มโอ', 'ปริม', 'บอย'];
+            const surnames = ['ใจดี', 'รักชาติ', 'เจริญ', 'มั่งคั่ง', 'สุขใส', 'บุญธรรม', 'ใจงาม', 'มีสุข'];
+            const minutes = Math.floor(Math.random() * 59) + 1;
+            return {
+                name: getRandomElement(names) + ' ' + getRandomElement(surnames),
+                time: minutes + ' นาทีที่แล้ว'
+            };
+        }
+
+        function createCommentElement(profile, sentiment, text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'comment';
+            wrapper.dataset.sentiment = sentiment;
+
+            const meta = document.createElement('div');
+            meta.className = 'comment-meta';
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = profile.name;
+            const timeSpan = document.createElement('span');
+            timeSpan.textContent = '• ' + profile.time;
+            const badge = document.createElement('span');
+            badge.className = 'badge';
+            badge.textContent = sentiment === 'positive' ? 'เชิงบวก' : sentiment === 'negative' ? 'เชิงลบ' : 'เป็นกลาง';
+
+            meta.appendChild(nameSpan);
+            meta.appendChild(timeSpan);
+            meta.appendChild(badge);
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'comment-text';
+            textDiv.textContent = text;
+
+            wrapper.appendChild(meta);
+            wrapper.appendChild(textDiv);
+            return wrapper;
+        }
+
+        function updateStats(counts) {
+            const total = counts.positive + counts.negative + counts.neutral;
+            document.getElementById('totalComments').textContent = total;
+            document.getElementById('positiveComments').textContent = counts.positive;
+            document.getElementById('negativeComments').textContent = counts.negative;
+            document.getElementById('neutralComments').textContent = counts.neutral;
+        }
+
+        function generateComments() {
+            const category = document.getElementById('newsCategory').value;
+            let count = parseInt(document.getElementById('commentCount').value, 10);
+            if (Number.isNaN(count)) count = 5;
+            count = Math.max(1, Math.min(20, count));
+
+            const newsContent = document.getElementById('newsContent').value || '';
+            const newsSentiment = analyzeNewsSentiment(newsContent);
+            const results = document.getElementById('results');
+            const container = document.getElementById('commentsContainer');
+            container.innerHTML = '';
+
+            const sentimentCounts = { positive: 0, negative: 0, neutral: 0 };
+
+            // สร้างความคิดเห็นตามอัตราส่วนที่เหมือนจริง
+            const sentimentDistribution = { positive: 0.4, negative: 0.35, neutral: 0.25 };
+            // ปรับอัตราส่วนตามความรู้สึกของข่าว
+            if (newsSentiment === 'positive') {
+                sentimentDistribution.positive = 0.5;
+                sentimentDistribution.negative = 0.25;
+                sentimentDistribution.neutral = 0.25;
+            } else if (newsSentiment === 'negative') {
+                sentimentDistribution.negative = 0.5;
+                sentimentDistribution.positive = 0.25;
+                sentimentDistribution.neutral = 0.25;
+            }
+
+            // เพื่อให้จำนวนตามสัดส่วนใกล้เคียง ลองปัดทีหลัง
+            const targetPositive = Math.round(count * sentimentDistribution.positive);
+            const targetNegative = Math.round(count * sentimentDistribution.negative);
+            let targetNeutral = count - targetPositive - targetNegative;
+            if (targetNeutral < 0) targetNeutral = 0;
+
+            const sentimentsPool = [];
+            for (let i = 0; i < targetPositive; i++) sentimentsPool.push('positive');
+            for (let i = 0; i < targetNegative; i++) sentimentsPool.push('negative');
+            while (sentimentsPool.length < count) sentimentsPool.push('neutral');
+            // สุ่มลำดับ
+            for (let i = sentimentsPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [sentimentsPool[i], sentimentsPool[j]] = [sentimentsPool[j], sentimentsPool[i]];
+            }
+
+            sentimentsPool.slice(0, count).forEach(sentiment => {
+                const profile = generateUserProfile();
+                const text = generateComment(category, sentiment);
+                const el = createCommentElement(profile, sentiment, text);
+                container.appendChild(el);
+                sentimentCounts[sentiment] += 1;
+            });
+
+            updateStats(sentimentCounts);
+            results.style.display = 'block';
+        }
+
+        // คัดลอกข้อความความคิดเห็นทั้งหมด (ทีละบรรทัด)
+        async function copyAllComments() {
+            const container = document.getElementById('commentsContainer');
+            const texts = Array.from(container.querySelectorAll('.comment-text'))
+                .map(el => el.textContent.trim())
+                .filter(Boolean);
+            const joined = texts.join('\n');
+            if (!joined) {
+                alert('ยังไม่มีความคิดเห็นให้คัดลอก');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(joined);
+                const btn = document.getElementById('exportBtn');
+                const old = btn.textContent;
+                btn.textContent = '✅ คัดลอกแล้ว';
+                setTimeout(() => (btn.textContent = old), 1500);
+            } catch (e) {
+                // fallback
+                const ta = document.createElement('textarea');
+                ta.value = joined;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                alert('คัดลอกแล้ว');
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('commentsContainer').innerHTML = '';
+            document.getElementById('results').style.display = 'none';
+            updateStats({ positive: 0, negative: 0, neutral: 0 });
+        }
+
+        // Events
+        document.getElementById('generateBtn').addEventListener('click', generateComments);
+        document.getElementById('clearBtn').addEventListener('click', clearResults);
+        document.getElementById('exportBtn').addEventListener('click', copyAllComments);
+    </script>
+</body>
+</html>
